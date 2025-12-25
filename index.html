@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>PawPerfect 🐾 Dog Training</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { -webkit-tap-highlight-color: transparent; }
+        body { font-family: system-ui, -apple-system, sans-serif; }
+        .confetti { position: fixed; font-size: 24px; animation: fall 3s ease-out forwards; pointer-events: none; z-index: 999; }
+        @keyframes fall { 0% { opacity: 1; transform: translateY(0) rotate(0deg); } 100% { opacity: 0; transform: translateY(100vh) rotate(720deg); } }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-orange-50 via-orange-100 to-amber-100 min-h-screen">
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script>
+const e = React.createElement;
+const { useState } = React;
+
+const programs = [
+  {id:'potty',cat:'foundation',icon:'🏠',title:'Potty Training',desc:'Master housebreaking with proven protocols',time:'2-4 weeks',diff:'Beginner',emoji:'🐕',stage:'Foundation',color:'from-orange-200 to-orange-100',video:'https://www.youtube.com/watch?v=7vOXWCewEYM',videoTitle:'Complete House Training Guide',steps:[{t:'Understand the Schedule Rule',c:'Use the month-plus-one formula: A puppy can hold their bladder for approximately their age in months plus one hour.',tip:'Set phone alarms until the schedule becomes second nature.'},{t:'Create a Consistent Routine',c:'Take your puppy out first thing in the morning, after every meal, after naps, after play sessions, and before bed.',tip:'Keep a potty log for the first week to identify patterns.'},{t:'Use a Verbal Cue',c:"As your puppy eliminates, say a consistent phrase like 'Go potty.'",tip:'Wait silently until they start, then give the cue quietly.'},{t:'Reward Immediately',c:'The moment your puppy finishes outside, praise enthusiastically and give a high-value treat within 1-2 seconds.',tip:'Keep treats by the door so they are always accessible.'},{t:'Manage the Environment',c:'When you cannot supervise, use a properly-sized crate just large enough to stand, turn around, and lie down.',tip:'Use enzymatic cleaner for accidents.'},{t:'Handle Accidents Correctly',c:"If you catch your puppy mid-accident, interrupt with 'Oops!' and take them outside. Never punish after.",tip:'If you did not see it happen, just clean it up.'}],comments:[{u:'u/PuppyTrainer2024',v:'4.2k',t:'The crate method changed everything!'},{u:'u/VetTechSarah',v:'3.1k',t:'#1 mistake is punishing accidents. Focus on rewarding success!'},{u:'u/GoldenMom_Expert',v:'2.8k',t:'Ring a bell before going out. Within 2 weeks, my pup was ringing them!'}]},
+  {id:'crate',cat:'foundation',icon:'🏡',title:'Crate Training',desc:'Create a safe den your dog loves',time:'1-2 weeks',diff:'Beginner',emoji:'🐶',stage:'Foundation',color:'from-orange-200 to-orange-100',video:'https://www.youtube.com/watch?v=dUzF0g0PwY4',videoTitle:'Positive Crate Training',steps:[{t:'Choose the Right Crate',c:'Select a crate allowing your dog to stand, turn around, and lie down comfortably.',tip:'For puppies, get a crate with a divider.'},{t:'Make It Inviting',c:'Place in a family area. Add comfortable bedding and a worn t-shirt with your scent.',tip:'Feed meals near the crate, then inside.'},{t:'Introduce Gradually',c:"Let your dog explore freely. Toss high-value treats inside. Mark with 'Yes!' when they enter.",tip:'Use a frozen Kong to keep them occupied.'},{t:'Close Door Slowly',c:'Once entering willingly, briefly close the door while feeding treats through bars.',tip:'Stay nearby initially.'},{t:'Build Duration',c:'Extend crate time gradually with long-lasting chews.',tip:'Exercise your dog before crate time.'},{t:'Handle Whining Correctly',c:'Do not let them out when whining. Wait for 2 seconds of quiet, then reward.',tip:'Distinguish attention-seeking from genuine distress.'}],comments:[{u:'u/CrateMasterDog',v:'3.5k',t:'Frozen Kong method is unbeatable!'},{u:'u/RescueDogMom',v:'2.9k',t:'Cover three sides with a blanket for a den feeling.'},{u:'u/DogTrainerPro',v:'2.4k',t:'Never use the crate as punishment.'}]},
+  {id:'social',cat:'foundation',icon:'👋',title:'Socialization',desc:'Build confidence during critical development',time:'Ongoing',diff:'Beginner',emoji:'🦮',stage:'Foundation',color:'from-orange-200 to-orange-100',video:'https://www.youtube.com/watch?v=xPPExZACeT4',videoTitle:'Puppy Socialization Guide',steps:[{t:'Understand the Window',c:'Primary socialization is 3-14 weeks. Puppies are naturally curious and less fearful.',tip:'Controlled socialization is important even before fully vaccinated.'},{t:'Create a Checklist',c:'Expose to: different people, surfaces, sounds, environments, and friendly dogs.',tip:'Aim for 100 new positive experiences in the first month.'},{t:'Quality Over Quantity',c:'Every experience must be positive. Watch for stress signs.',tip:'Pair every new experience with treats.'},{t:'Navigate Fear Periods',c:'Fear periods occur around 8-11 weeks and 6-14 months.',tip:'Go extra slowly during fear periods.'},{t:'Puppy Classes',c:'Enroll in positive reinforcement puppy class before 16 weeks.',tip:'Look for classes matching puppies by size.'},{t:'Ongoing Socialization',c:'Continue exposing to new experiences throughout the first year.',tip:'Regular outings should be part of your routine.'}],comments:[{u:'u/BehavioristPhD',v:'5.1k',t:'Quality over quantity always!'},{u:'u/PuppyClassInstructor',v:'3.7k',t:'You can safely expose puppies before fully vaccinated.'},{u:'u/FearFreeTrainer',v:'2.9k',t:'Watch body language. Tucked tail = over threshold.'}]},
+  {id:'sit',cat:'basic',icon:'🪑',title:'Sit Command',desc:'The foundation for all other training',time:'2-3 days',diff:'Beginner',emoji:'🐶',stage:'Basic',color:'from-purple-200 to-purple-100',video:'https://www.youtube.com/watch?v=_-wbsLHaBzE',videoTitle:'Teaching Sit Step-by-Step',steps:[{t:'Lure Into Position',c:'Hold treat close to nose. Slowly move it up and back over their head.',tip:'Keep treat close to nose. Too fast makes them jump.'},{t:'Mark and Reward',c:"Instant their rear touches ground, mark 'Yes!' and deliver treat.",tip:'Mark within 0.5 seconds of behavior.'},{t:'Repeat Multiple Times',c:'Practice 5-10 reps per session, 2-3 sessions daily.',tip:'Quit while eager.'},{t:'Add Verbal Cue',c:"Once reliable with lure, say 'Sit' just before hand motion.",tip:'Say cue once, clearly.'},{t:'Fade the Lure',c:'Gradually make hand motion smaller.',tip:'If dog stops responding, go back a step.'},{t:'Generalize Behavior',c:'Practice in different locations with distractions.',tip:'New location = easier criteria at first.'}],comments:[{u:'u/ProTrainerAlex',v:'4.8k',t:'Say it ONCE. One cue = one behavior.'},{u:'u/ClickerNerd',v:'3.2k',t:'Invest in a clicker!'},{u:'u/PuppyTrainingMom',v:'2.7k',t:'Practice sit before EVERYTHING.'}]},
+  {id:'down',cat:'basic',icon:'⬇️',title:'Down Command',desc:'Essential for settling and calm behavior',time:'3-5 days',diff:'Beginner',emoji:'🐕‍🦺',stage:'Basic',color:'from-purple-200 to-purple-100',video:'https://www.youtube.com/watch?v=wnT8Fv0Pgqs',videoTitle:'Teaching Down Command',steps:[{t:'Start from Sit',c:'Hold treat at nose. Lower straight down between front paws, then pull toward you.',tip:'Go slowly. Standing up means too fast.'},{t:'Mark the Down',c:"Moment elbows hit floor, mark 'Yes!' and reward.",tip:'Deliver treat while still in down.'},{t:'Try Alternatives',c:'If luring does not work: capture when down naturally.',tip:'Different dogs respond to different methods.'},{t:'Add Duration',c:'Once reliable, add time before marking.',tip:'Vary duration randomly.'},{t:'Add the Cue',c:"Say 'Down' before hand motion.",tip:'Keep voice calm.'},{t:'Proof Against Distractions',c:'Practice new locations with increasing distractions.',tip:'If cannot perform, reduce difficulty.'}],comments:[{u:'u/ObedienceChamp',v:'3.9k',t:'Some dogs resist down - practice on soft bed first.'},{u:'u/ServiceDogTrainer',v:'3.1k',t:'Try elevated surface so nowhere to back up.'},{u:'u/PositiveMethodsOnly',v:'2.6k',t:'NEVER push dog down.'}]},
+  {id:'stay',cat:'basic',icon:'✋',title:'Stay Command',desc:'Teach impulse control and duration',time:'1-2 weeks',diff:'Beginner',emoji:'🐩',stage:'Basic',color:'from-purple-200 to-purple-100',video:'https://www.youtube.com/watch?v=kBqJHKEl4UY',videoTitle:'Teaching Stay with Duration',steps:[{t:'Start Small',c:"Say 'Stay,' wait one second, mark and treat.",tip:'If breaking position, progressing too fast.'},{t:'Add Duration Systematically',c:'Increase: 2, 3, 5, 8, 10 seconds. Vary randomly.',tip:'80% rule: succeed 8/10 times before increasing.'},{t:'Add Distance',c:'Once 30-second stay is reliable, take one step back.',tip:'Move sideways initially.'},{t:'Work Three Ds Separately',c:'Duration, Distance, Distraction - only work ONE at a time.',tip:'Adding distance? Reduce duration.'},{t:'Proof Against Distractions',c:'Gradually add: walking by, treat on floor, toy tossed.',tip:'If breaks, calmly reset.'},{t:'Release Word',c:"Always release with 'OK' or 'Free.'",tip:'Release cue becomes valuable.'}],comments:[{u:'u/CompetitionTrainer',v:'4.3k',t:'Reward IN POSITION. Go back to dog and treat.'},{u:'u/PatientPupMom',v:'3.4k',t:'Perfect 5-second stay today is success!'},{u:'u/ScienceBasedTraining',v:'2.8k',t:'Practice every new location from scratch.'}]},
+  {id:'come',cat:'basic',icon:'🏃',title:'Come When Called',desc:'The most important safety command',time:'2-4 weeks',diff:'Intermediate',emoji:'🐕',stage:'Basic',color:'from-purple-200 to-purple-100',video:'https://www.youtube.com/watch?v=rqpJnfLw53o',videoTitle:'Reliable Recall Training',steps:[{t:'Start Indoors',c:"Say name + 'Come!' excitedly, run backward clapping. Make it THE BEST THING EVER.",tip:'Use unique word only for recall.'},{t:'Never Poison the Cue',c:'NEVER call for anything unpleasant: baths, nail trims, end of playtime.',tip:'Go get your dog instead of calling for unpleasant things.'},{t:'Practice on Long Line',c:'Move to 20-30 foot training leash in yard.',tip:'Do not reel them in.'},{t:'Increase Distractions',c:'Progress from yard to quiet park to busier areas.',tip:'Only call when confident they will respond.'},{t:'The Recall Game',c:'Family members take turns calling dog between them.',tip:'Start few feet apart.'},{t:'Emergency Recall',c:'Condition special word with extremely high-value rewards.',tip:'Practice rarely to keep special.'}],comments:[{u:'u/RecallExpert',v:'5.7k',t:'Never call if not 90% sure they will come.'},{u:'u/OffLeashHiker',v:'4.1k',t:'After recall: 30-second party, THEN release.'},{u:'u/EmergencyVetStory',v:'3.6k',t:'Solid recall is genuinely life-saving.'}]},
+  {id:'leash',cat:'intermediate',icon:'🦮',title:'Loose Leash Walking',desc:'Enjoy walks without pulling',time:'2-4 weeks',diff:'Intermediate',emoji:'🐕‍🦺',stage:'Intermediate',color:'from-cyan-200 to-cyan-100',video:'https://www.youtube.com/watch?v=sFgtqgiAKoQ',videoTitle:'Stop Leash Pulling Forever',steps:[{t:'Understand Why Dogs Pull',c:'Dogs pull because it works - they get where they want.',tip:'Pulling is self-reinforcing.'},{t:'Be a Tree',c:'When dog pulls, stop completely. Do not move until slack.',tip:'First walk might only cover 100 feet.'},{t:'Reward Position',c:'Reward whenever walking nicely beside you.',tip:'Position next to leg becomes reinforcement zone.'},{t:'Change Direction',c:'If pulling ahead, turn and walk other direction.',tip:'Do not jerk leash.'},{t:'Use Front-Clip Harness',c:'Front-clip harness helps manage pulling while training.',tip:'Harness is management tool, not solution.'},{t:'Add Heel for Focus',c:'Teach formal heel for short periods.',tip:'Use heel briefly - through crowds.'}],comments:[{u:'u/WalkingExpert',v:'4.9k',t:'Retractable leashes TEACH pulling.'},{u:'u/MarathonDogWalker',v:'3.8k',t:'Stop the second it tightens, wait for eye contact.'},{u:'u/DogSportsComp',v:'3.1k',t:'Exercise your dog BEFORE training loose leash.'}]},
+  {id:'leave',cat:'intermediate',icon:'🚫',title:'Leave It',desc:'Essential impulse control for safety',time:'1-2 weeks',diff:'Intermediate',emoji:'🐶',stage:'Intermediate',color:'from-cyan-200 to-cyan-100',video:'https://www.youtube.com/watch?v=pEeS2dPpPtA',videoTitle:'Leave It Training Protocol',steps:[{t:'Closed Fist Game',c:"Hold treat in closed fist. Moment they back away, mark 'Yes!' and reward from OTHER hand.",tip:'Ignoring item earns something better.'},{t:'Open Palm Challenge',c:'Once reliable, try open palm. If they go for it, close hand.',tip:'Progress to treat on floor covered with hand.'},{t:'Add Verbal Cue',c:"Say 'Leave it' before presenting item.",tip:'Use cheerful tone, not threatening.'},{t:'Drop and Walk By',c:'Drop treat on ground, walk by on leash. Reward for ignoring.',tip:'If lunging, increase distance.'},{t:'Real-World Application',c:'Use for things on walks, dropped food in kitchen.',tip:'When it works in real situation, reward BIG.'},{t:'Emergency Drop',c:'Combine with drop it for items in mouth. Trade for something better.',tip:'Always have something better to trade.'}],comments:[{u:'u/ImpulseControlPro',v:'4.4k',t:'Dog should NEVER get the leave it item. Ever.'},{u:'u/SafetyFirstTrainer',v:'3.5k',t:'This saved my dog twice!'},{u:'u/GamesForDogs',v:'2.8k',t:'Make it a game! Leave it olympics.'}]},
+  {id:'place',cat:'intermediate',icon:'🛏️',title:'Place/Mat Training',desc:'Teach your dog to settle on command',time:'1-2 weeks',diff:'Intermediate',emoji:'🐕',stage:'Intermediate',color:'from-cyan-200 to-cyan-100',video:'https://www.youtube.com/watch?v=U1v9RAPF9LU',videoTitle:'Place Command Training',steps:[{t:'Choose a Mat',c:'Select portable mat, towel, or bed.',tip:'Use same mat consistently at first.'},{t:'Shape Going to Mat',c:'Any interaction - looking, stepping toward - mark and reward.',tip:'Toss treats onto mat.'},{t:'Build Duration',c:'Once going reliably, extend time. Reward while ON mat.',tip:'Down gets jackpot.'},{t:'Add the Cue',c:"When reliable, add 'Place' as cue.",tip:'Cue becomes shortcut for entire behavior.'},{t:'Add Distance and Duration',c:'Send from across room. Practice while cooking, eating.',tip:'Long-lasting chews on mat help.'},{t:'Proof with Distractions',c:'Practice with doorbell, guests, other pets.',tip:'Release with consistent word.'}],comments:[{u:'u/CalmDogHappyLife',v:'4.1k',t:'Place transformed my reactive dog!'},{u:'u/RestaurantDogOwner',v:'3.3k',t:'Same mat at outdoor restaurants. Dog lies calmly.'},{u:'u/SettleProtocol',v:'2.7k',t:'Try Karen Overall Relaxation Protocol!'}]},
+  {id:'separation',cat:'behavior',icon:'🏡',title:'Separation Anxiety',desc:'Help your dog feel comfortable alone',time:'Weeks-Months',diff:'Advanced',emoji:'🐕',stage:'Behavior',color:'from-red-200 to-red-100',video:'https://www.youtube.com/watch?v=HWT9DI7hMfo',videoTitle:'Separation Anxiety Treatment',steps:[{t:'Recognize True Separation Anxiety',c:'Involves panic when alone: destruction, vocalization, house soiling.',tip:'Use camera to observe behavior alone.'},{t:'Desensitize Departure Cues',c:'Practice picking up keys, putting down. Departure rituals without leaving.',tip:'10-15 fake departures daily.'},{t:'Practice Very Short Absences',c:'Start with absences so short they do not trigger anxiety.',tip:'If showing anxiety, progressing too fast.'},{t:'Positive Alone Activities',c:'Give special chew or Kong only when leaving.',tip:'Frozen Kongs help bridge anxious period.'},{t:'Calm Departures/Arrivals',c:'Ignore 10-15 minutes before leaving and after returning.',tip:'Come home calmly.'},{t:'Consider Professional Help',c:'Severe cases often need medication combined with behavior modification.',tip:'Medication is not giving up.'}],comments:[{u:'u/SepAnxietySurvivor',v:'5.3k',t:'6 months of DAILY practice to get from 0 seconds to 4 hours.'},{u:'u/VetBehaviorist',v:'4.2k',t:'Fluoxetine can be life-changing.'},{u:'u/WorkFromHomeDogMom',v:'3.5k',t:'DAP diffusers and calming music helped.'}]},
+  {id:'reactive',cat:'behavior',icon:'⚠️',title:'Leash Reactivity',desc:'Help your dog stay calm around triggers',time:'Months',diff:'Advanced',emoji:'🐕‍🦺',stage:'Behavior',color:'from-red-200 to-red-100',video:'https://www.youtube.com/watch?v=2B5JvXmOQIk',videoTitle:'Reactive Dog Training',steps:[{t:'Understand the Root',c:'Usually fear-based or frustration-based.',tip:'Fear: whale eye, tucked tail. Frustration: straining forward.'},{t:'Find Your Distance',c:'Every dog has threshold distance. Work under threshold.',tip:'Distance might be 100+ feet initially.'},{t:'Look-At-That (LAT)',c:"When dog notices trigger, mark 'Yes!' and treat.",tip:'Trigger should make dog look at YOU.'},{t:'Engage-Disengage Game',c:'Wait for dog to look at trigger, then back at you. Mark that check-in.',tip:'Wait for them to offer attention.'},{t:'Create Distance',c:'If trigger too close, turn and walk away calmly.',tip:'U-turns are your friends.'},{t:'Manage, Do Not Just Train',c:'Walk quiet times, use barriers, cross street before needed.',tip:'Avoiding triggers is smart management.'}],comments:[{u:'u/ReactiveRescueMom',v:'5.6k',t:'3 years of training: now checks in with me instead of exploding.'},{u:'u/FearFreeVet',v:'4.4k',t:'STOP using punishment for reactivity.'},{u:'u/CAAB_Trainer',v:'3.7k',t:'The 4 Rs: Retreat, Reorient, Respire, Reward.'}]},
+  {id:'enrichment',cat:'enrichment',icon:'🧩',title:'Mental Enrichment',desc:'Brain games that tire your dog out',time:'Daily',diff:'Beginner',emoji:'🐶',stage:'Enrichment',color:'from-yellow-200 to-yellow-100',video:'https://www.youtube.com/watch?v=e_PqDgKdOgQ',videoTitle:'Mental Stimulation Games',steps:[{t:'Puzzle Feeders',c:'Stop feeding from bowl! Use puzzles, snuffle mats, Kongs.',tip:'Start easy, increase difficulty.'},{t:'Snuffle Mats',c:'Hide treats in fabric strips dogs root through.',tip:'Start visible, then hide deeper.'},{t:'Hide and Seek',c:'Have dog wait while you hide, then call.',tip:'Play with treats first.'},{t:'Muffin Tin Game',c:'Put treats in muffin cups, cover all with tennis balls.',tip:'Start treats visible.'},{t:'Cardboard Destruction',c:'Let dog destroy cardboard boxes with treats hidden inside.',tip:'Start open box, progress to closed.'},{t:'Training as Enrichment',c:'Learning new things is mentally taxing.',tip:'5 minutes 3x daily beats one 15-minute session.'}],comments:[{u:'u/EnrichmentObsessed',v:'4.7k',t:'Snuffle mats changed my life!'},{u:'u/WetWeatherDogMom',v:'3.8k',t:'Frozen Kong + snuffle mat = dog that sleeps all afternoon.'},{u:'u/PuzzleFeedingPro',v:'3.1k',t:'Dog has not eaten from bowl in 3 years.'}]},
+  {id:'tricks',cat:'enrichment',icon:'🎪',title:'Fun Tricks',desc:'Shake, spin, roll over and more!',time:'Ongoing',diff:'Intermediate',emoji:'🐩',stage:'Tricks',color:'from-yellow-200 to-yellow-100',video:'https://www.youtube.com/watch?v=jFMA5ggFsXU',videoTitle:'Cool Dog Tricks',steps:[{t:'Shake/Paw',c:'Hold treat in closed fist near chest. Moment they lift paw, mark and reward.',tip:'If no pawing, tickle back of leg.'},{t:'Spin/Twirl',c:'Hold treat at nose, slowly lure in circle.',tip:'Fade large lure to small circle.'},{t:'Roll Over',c:'From down, lure nose toward shoulder, then back.',tip:'Practice on soft surfaces.'},{t:'Play Dead/Bang',c:'From down, lure onto side. Mark lying flat and still.',tip:'Build duration gradually.'},{t:'Weave Through Legs',c:'Stand legs apart. Lure through with treat.',tip:'Practice both sides for balance.'},{t:'Speak/Quiet',c:"Wait for bark, mark, reward. Add 'Speak.'",tip:'Teaching speak can reduce nuisance barking.'}],comments:[{u:'u/TrickDogChamp',v:'4.5k',t:'Trick training secretly improves all training!'},{u:'u/AKCTrickDogMom',v:'3.6k',t:'AKC has Trick Dog titles!'},{u:'u/ShapingExpert',v:'2.9k',t:'Break complex tricks into tiny steps.'}]}
+];
+
+const tips = [
+  {t:'⏱️ Timing',d:'Mark within 0.5 seconds'},
+  {t:'📏 Short Sessions',d:'5-10 minutes max'},
+  {t:'🎯 One Cue',d:'Say it once clearly'},
+  {t:'🍖 High-Value',d:'Use special treats'},
+  {t:'✅ Set Up Success',d:'Control environment'},
+  {t:'👨‍👩‍👧 Consistency',d:'Same cues for everyone'},
+  {t:'💚 Positive',d:'Reward what you want'},
+  {t:'🙏 Patience',d:'Celebrate small wins'}
+];
+
+function confetti() {
+  const emojis = ['🎉','⭐','🐾','❤️','🎊'];
+  for(let i=0; i<30; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    c.style.left = Math.random()*100+'vw';
+    c.style.top = '-30px';
+    c.style.animationDelay = Math.random()*0.5+'s';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3000);
+  }
+}
+
+function App() {
+  const [view, setView] = useState('programs');
+  const [program, setProgram] = useState(null);
+  const [completed, setCompleted] = useState([]);
+  const [tab, setTab] = useState('steps');
+  const [filter, setFilter] = useState('all');
+
+  const pct = Math.round((completed.length / programs.length) * 100);
+  const filtered = filter === 'all' ? programs : programs.filter(p => p.cat === filter);
+
+  const openProgram = (p) => { setProgram(p); setView('lesson'); setTab('steps'); window.scrollTo(0,0); };
+  const complete = () => {
+    if (program && !completed.includes(program.id)) {
+      setCompleted([...completed, program.id]);
+      confetti();
+    }
+  };
+
+  // Header
+  const header = e('div', {className:'bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-4 mb-4 shadow-lg'},
+    e('div', {className:'flex items-center justify-between'},
+      e('div', {className:'flex items-center gap-3'},
+        e('div', {className:'w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-500 rounded-xl flex items-center justify-center text-2xl shadow-md'}, '🐾'),
+        e('div', null,
+          e('h1', {className:'text-xl font-bold text-white'}, 'PawPerfect'),
+          e('p', {className:'text-xs text-white/80'}, '✨ Dog Training')
+        )
+      ),
+      e('div', {className:'flex gap-2'},
+        e('div', {className:'text-center bg-white/20 px-3 py-1 rounded-lg'},
+          e('div', {className:'text-lg font-bold text-orange-200'}, completed.length),
+          e('div', {className:'text-xs text-white/80'}, 'Done')
+        ),
+        e('div', {className:'text-center bg-white/20 px-3 py-1 rounded-lg'},
+          e('div', {className:'text-lg font-bold text-orange-200'}, pct+'%'),
+          e('div', {className:'text-xs text-white/80'}, 'Progress')
+        )
+      )
+    )
+  );
+
+  // Nav
+  const nav = e('div', {className:'flex gap-1 mb-4 bg-white rounded-xl p-1 shadow'},
+    [['programs','📚','Programs'],['roadmap','🗺️','Journey'],['progress','📊','Progress']].map(([v,icon,label]) =>
+      e('button', {key:v, onClick:()=>{setView(v);setProgram(null);}, className:`flex-1 py-2 rounded-lg text-xs font-bold flex flex-col items-center gap-1 transition ${view===v?'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow':'text-gray-500'}`},
+        e('span', {className:'text-base'}, icon), label
+      )
+    )
+  );
+
+  // Programs View
+  const programsView = e('div', {className:'space-y-4'},
+    e('div', {className:'bg-white rounded-xl p-4 shadow'},
+      e('h2', {className:'text-lg font-bold text-teal-700 mb-3'}, '🎓 Training Programs'),
+      e('div', {className:'flex flex-wrap gap-2 mb-4'},
+        [['all','🌟 All'],['foundation','🏠'],['basic','📘'],['intermediate','📗'],['behavior','🧠'],['enrichment','🎮']].map(([f,l]) =>
+          e('button', {key:f, onClick:()=>setFilter(f), className:`px-3 py-1 rounded-full text-xs font-bold transition ${filter===f?'bg-gradient-to-r from-emerald-500 to-teal-500 text-white':'bg-gray-100 text-gray-600'}`}, l)
+        )
+      ),
+      e('div', {className:'space-y-3'},
+        filtered.map(p =>
+          e('div', {key:p.id, onClick:()=>openProgram(p), className:`p-3 rounded-xl border-2 cursor-pointer transition ${completed.includes(p.id)?'border-green-400 bg-green-50':'border-transparent bg-gradient-to-r from-gray-50 to-orange-50'}`},
+            e('div', {className:'flex items-center gap-3'},
+              e('div', {className:`w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-gradient-to-br ${p.color}`}, p.icon),
+              e('div', {className:'flex-1'},
+                e('h3', {className:'font-bold text-gray-700'}, p.title),
+                e('p', {className:'text-xs text-gray-500'}, p.desc),
+                e('div', {className:'flex gap-2 mt-1'},
+                  e('span', {className:'text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded'}, '⏱️ '+p.time),
+                  e('span', {className:'text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded'}, '📈 '+p.diff)
+                )
+              ),
+              completed.includes(p.id) && e('span', {className:'text-2xl'}, '✅')
+            )
+          )
+        )
+      )
+    ),
+    e('div', {className:'bg-white rounded-xl p-4 shadow'},
+      e('h3', {className:'font-bold text-teal-700 mb-3'}, '💡 Quick Tips'),
+      e('div', {className:'grid grid-cols-2 gap-2'},
+        tips.map((t,i) =>
+          e('div', {key:i, className:'bg-orange-50 rounded-lg p-2 border-l-4 border-orange-400'},
+            e('div', {className:'font-bold text-xs text-teal-700'}, t.t),
+            e('div', {className:'text-xs text-gray-500'}, t.d)
+          )
+        )
+      )
+    )
+  );
+
+  // Roadmap View
+  const roadmapView = e('div', {className:'bg-gradient-to-b from-green-400 via-green-500 to-green-600 rounded-xl p-4 shadow-lg min-h-96 relative overflow-hidden'},
+    e('div', {className:'absolute top-4 left-4 text-2xl opacity-50'}, '🌳'),
+    e('div', {className:'absolute top-20 right-4 text-2xl opacity-50'}, '🌲'),
+    e('div', {className:'absolute bottom-20 left-4 text-2xl opacity-50'}, '🦴'),
+    e('div', {className:'absolute bottom-4 right-4 text-2xl opacity-50'}, '⭐'),
+    e('div', {className:'text-center mb-4 relative z-10'},
+      e('h2', {className:'text-xl font-bold text-white drop-shadow'}, '🗺️ Your Journey'),
+      e('div', {className:'bg-white/30 h-3 rounded-full mt-2 mx-auto max-w-xs overflow-hidden'},
+        e('div', {className:'bg-gradient-to-r from-orange-400 to-yellow-400 h-full rounded-full transition-all', style:{width:pct+'%'}})
+      ),
+      e('div', {className:'inline-block bg-gradient-to-r from-orange-400 to-orange-500 text-white px-4 py-1 rounded-full mt-2 font-bold text-sm shadow'}, '🏆 Level '+(Math.floor(completed.length/2)+1))
+    ),
+    e('div', {className:'relative z-10 max-w-xs mx-auto'},
+      e('svg', {className:'absolute inset-0 w-full h-full', viewBox:'0 0 200 600', preserveAspectRatio:'xMidYMid meet'},
+        e('path', {d:'M150 30 Q150 50,130 60 L70 60 Q50 60,50 80 L50 120 Q50 140,70 140 L130 140 Q150 140,150 160 L150 200 Q150 220,130 220 L70 220 Q50 220,50 240 L50 280 Q50 300,70 300 L130 300 Q150 300,150 320 L150 360 Q150 380,130 380 L70 380 Q50 380,50 400 L50 440 Q50 460,70 460 L130 460 Q150 460,150 480 L150 520', fill:'none', stroke:'#d4a574', strokeWidth:'12', strokeLinecap:'round', opacity:'0.8'})
+      ),
+      e('div', {className:'relative space-y-4 pt-2'},
+        programs.slice(0,8).map((p,i) => {
+          const done = completed.includes(p.id);
+          const prevDone = i === 0 || completed.includes(programs[i-1].id);
+          const current = !done && prevDone;
+          return e('div', {key:p.id, className:`flex ${i%2===0?'justify-end pr-2':'justify-start pl-2'}`},
+            e('div', {onClick:()=>openProgram(p), className:`w-16 h-16 rounded-full flex flex-col items-center justify-center cursor-pointer transition shadow-lg relative ${done?'bg-green-100 border-4 border-green-400':current?'bg-white border-4 border-orange-400 animate-pulse':'bg-white border-4 border-gray-300'}`},
+              done && e('div', {className:'absolute -top-1 -left-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold'}, '✓'),
+              !done && e('div', {className:'absolute -top-1 -right-1 w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold'}, i+1),
+              e('span', {className:'text-xl'}, p.emoji),
+              e('span', {className:'text-xs font-bold text-gray-600 text-center leading-tight'}, p.title.split(' ')[0])
+            )
+          );
+        })
+      )
+    )
+  );
+
+  // Progress View
+  const progressView = e('div', {className:'bg-white rounded-xl p-4 shadow'},
+    e('h2', {className:'text-lg font-bold text-teal-700 mb-3'}, '📊 Your Progress'),
+    e('div', {className:'space-y-2'},
+      programs.map(p => {
+        const done = completed.includes(p.id);
+        return e('div', {key:p.id, onClick:()=>openProgram(p), className:'flex items-center gap-3 p-2 rounded-lg bg-gray-50 cursor-pointer'},
+          e('div', {className:`w-10 h-10 rounded-xl flex items-center justify-center text-xl ${done?'bg-green-100':'bg-gray-200'}`}, p.icon),
+          e('div', {className:'flex-1'},
+            e('div', {className:'font-bold text-sm text-gray-700'}, p.title),
+            e('div', {className:'text-xs text-gray-500'}, done?'✅ Completed!':'⏳ Not started'),
+            e('div', {className:'h-1 bg-gray-200 rounded mt-1'},
+              e('div', {className:`h-full rounded ${done?'bg-green-400 w-full':'w-0'}`})
+            )
+          )
+        );
+      })
+    )
+  );
+
+  // Lesson View
+  const lessonView = program && e('div', {className:'bg-white rounded-xl p-4 shadow'},
+    e('button', {onClick:()=>setView('programs'), className:'mb-3 px-3 py-1 bg-orange-100 text-orange-600 rounded-lg text-sm font-bold'}, '← Back'),
+    e('div', {className:'text-center mb-4'},
+      e('h2', {className:'text-xl font-bold text-teal-700'}, program.icon+' '+program.title),
+      e('p', {className:'text-sm text-gray-500'}, program.desc),
+      e('div', {className:'h-2 bg-gray-100 rounded-full mt-2 mx-auto max-w-xs overflow-hidden'},
+        e('div', {className:`h-full bg-green-400 rounded-full transition-all ${completed.includes(program.id)?'w-full':'w-0'}`})
+      )
+    ),
+    e('div', {className:'flex gap-1 mb-4 bg-gray-100 rounded-lg p-1'},
+      [['steps','📝 Steps'],['video','🎥 Video'],['tips','💬 Tips']].map(([t,l]) =>
+        e('button', {key:t, onClick:()=>setTab(t), className:`flex-1 py-2 rounded-md text-xs font-bold transition ${tab===t?'bg-gradient-to-r from-orange-400 to-orange-500 text-white':'text-gray-500'}`}, l)
+      )
+    ),
+    tab === 'steps' && e('div', {className:'space-y-3'},
+      program.steps.map((s,i) =>
+        e('div', {key:i, className:'bg-gray-50 rounded-xl p-3 border-l-4 border-teal-500'},
+          e('div', {className:'flex items-center gap-2 mb-2'},
+            e('div', {className:'w-7 h-7 bg-teal-500 text-white rounded-lg flex items-center justify-center font-bold text-sm'}, i+1),
+            e('h4', {className:'font-bold text-gray-700'}, s.t)
+          ),
+          e('p', {className:'text-sm text-gray-600 ml-9'}, s.c),
+          s.tip && e('div', {className:'ml-9 mt-2 bg-yellow-50 rounded-lg p-2 border-l-2 border-yellow-400'},
+            e('div', {className:'text-xs font-bold text-yellow-600'}, '💡 Pro Tip'),
+            e('div', {className:'text-xs text-yellow-700'}, s.tip)
+          )
+        )
+      ),
+      !completed.includes(program.id) ?
+        e('button', {onClick:complete, className:'w-full py-3 bg-gradient-to-r from-green-400 to-green-500 text-white rounded-xl font-bold text-lg shadow-lg'}, '✓ Mark Complete') :
+        e('div', {className:'text-center py-3 bg-green-100 text-green-600 rounded-xl font-bold'}, '🎉 Completed!')
+    ),
+    tab === 'video' && e('div', {className:'bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 text-center'},
+      e('h3', {className:'text-lg font-bold text-white mb-2'}, '🎬 '+program.videoTitle),
+      e('p', {className:'text-gray-400 text-sm mb-4'}, 'Watch the full demonstration'),
+      e('a', {href:program.video, target:'_blank', rel:'noopener noreferrer', className:'inline-block bg-red-500 text-white px-6 py-3 rounded-xl font-bold'}, '▶ Watch on YouTube')
+    ),
+    tab === 'tips' && e('div', {className:'space-y-3'},
+      e('div', {className:'bg-gradient-to-r from-orange-500 to-red-500 rounded-xl p-3 flex items-center gap-2'},
+        e('span', {className:'text-2xl'}, '🤖'),
+        e('h3', {className:'font-bold text-white'}, 'Community Tips')
+      ),
+      program.comments.map((c,i) =>
+        e('div', {key:i, className:'bg-gray-50 rounded-xl p-3 border-l-4 border-orange-400'},
+          e('div', {className:'flex justify-between items-center mb-1'},
+            e('span', {className:'text-xs font-bold text-orange-500'}, '👤 '+c.u),
+            e('span', {className:'text-xs bg-orange-100 text-orange-500 px-2 py-0.5 rounded'}, '⬆️ '+c.v)
+          ),
+          e('p', {className:'text-sm text-gray-600'}, c.t)
+        )
+      )
+    )
+  );
+
+  return e('div', {className:'max-w-md mx-auto p-4 pb-24'},
+    header,
+    nav,
+    view === 'programs' && programsView,
+    view === 'roadmap' && roadmapView,
+    view === 'progress' && progressView,
+    view === 'lesson' && lessonView
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(e(App));
+    </script>
+</body>
+</html>
